@@ -19,18 +19,24 @@ Protect student documents, questions, notes, generated answers, account data, cr
 - Use a maintained identity provider or well-reviewed authentication library.
 - Store password hashes only if managing passwords directly; use a modern adaptive password hashing scheme.
 - Enforce workspace membership and role checks server-side for every resource.
-- Derive tenant scope from the authenticated principal.
+- Use `workspace_id` as the single canonical tenant key; derive it from server-side membership, never from an untrusted client claim.
 - Never trust user_id, workspace_id, storage key or resource ownership supplied only by the client.
-- Apply tenant scope to retrieval, caches, background jobs and export generation.
-- Consider PostgreSQL row-level security as defense in depth; test connection-pool context reset.
+- Apply workspace scope to retrieval, caches, background jobs, object storage operations and export generation.
+- Use composite foreign keys to prevent children in one workspace referencing parents in another.
+- Enable PostgreSQL RLS on workspace-owned tables with explicit per-operation policies; use USING for row visibility/old-row access and WITH CHECK for inserted/resulting rows.
+- Run the application with a dedicated role that neither owns protected tables nor has BYPASSRLS. Keep migrations and privileged maintenance separate.
+- Set workspace context transaction-locally for every tenant-scoped transaction; never depend on session state under transaction pooling. Missing context must fail closed.
+- Consider FORCE ROW LEVEL SECURITY, while recognizing superusers and BYPASSRLS roles still bypass policies. Test using the actual runtime role and pooled connection reuse.
+- Treat RLS as defense in depth, not a replacement for application authorization or object-level checks.
 
 ## 3. Upload safety
 
-- Allowlist extensions and detected media types; verify magic bytes/signatures.
-- Enforce per-file size, page count, image dimensions, archive entry count, nesting depth and decompressed-size limits.
+- Allowlist required extensions and validate extension, MIME and file signature together; client MIME is untrusted and signature checks alone are insufficient.
+- Enforce compressed/decompressed byte limits, per-file size, page count, image dimensions, archive entry count/depth and processing resource limits.
 - Reject encrypted or malformed files unless an explicit safe workflow is implemented.
-- Store originals in private object storage with random object keys.
-- Never execute macros, embedded scripts, JavaScript, shell commands or arbitrary files.
+- Store originals in private object storage with opaque application-generated object keys; never use the submitted filename as a path.
+- Never execute macros, embedded scripts, JavaScript, shell commands or arbitrary archive contents.
+- Do not send private documents to public malware-scanning services without privacy review and explicit user consent.
 - Run parsers/converters in isolated, unprivileged workers with CPU, memory, time and filesystem limits.
 - Scan where practical; treat scan results as an additional signal, not a substitute for parser isolation.
 - Normalize filenames and never use a user filename as a filesystem path.
@@ -54,7 +60,8 @@ Protect student documents, questions, notes, generated answers, account data, cr
 - Least-privilege service identities.
 - Secret manager/environment injection; no secrets in Git or client-side bundles.
 - Define backup, restore and object lifecycle policies.
-- Deletion must cover originals, derived assets, vector rows, cached artifacts and exports according to the retention policy.
+- Deletion must tombstone the source, stop stale jobs, purge originals/derived assets/vector rows/caches/exports according to retention policy, and define backup expiry/replay semantics.
+- Preserve an explicit source-deleted citation state; never silently retarget citations.
 
 ## 6. Logging and monitoring
 
