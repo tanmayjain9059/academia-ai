@@ -118,3 +118,5 @@ Only after beta evidence:
 - SLOs, on-call, incident and abuse workflows.
 
 Do not build speculative multi-region, Kubernetes, microservices or social features into the MVP.
+
+See [Data integrity, tenant isolation and evaluation specification](DATA_INTEGRITY_AND_EVALUATION.md) for the detailed security, lifecycle and quality gates.
