@@ -17,20 +17,20 @@ Do not use one multimodal LLM for every stage. Keep task boundaries explicit:
 ## 2. Extraction routing
 
 1. Detect file type using extension, MIME and file signature; do not trust extension alone.
-2. Prefer native parsers for born-digital PDF, DOCX, PPTX and XLSX.
-3. Render pages/slides only when visual layout or OCR is needed.
-4. Run OCR on scanned pages and images.
-5. Measure OCR confidence and layout completeness.
-6. Escalate only difficult pages (tables, multi-column layouts, formulas, mixed scripts) to heavier document-understanding/VLM models.
-7. Keep source image, raw extracted text and normalized blocks for review.
-8. Never silently treat low-confidence OCR as verified question text.
+2. Use Docling as the leading candidate for common document normalization. Its current format matrix includes PDF, modern Office, legacy Office through LibreOffice, OpenDocument, EPUB, markup/text formats, common raster images, and optional audio/video paths. Format support must be validated for feature-level fidelity; it does not guarantee preservation of every note, formula, chart, merged cell or coordinate.
+3. Retain specialist native parsers where they preserve more faithful structure or provenance (especially spreadsheet cell/formula metadata and presentation-specific content).
+4. Render pages/slides only when visual layout or OCR is needed.
+5. Run OCR on scanned pages and images, not indiscriminately on born-digital text.
+6. Measure OCR confidence and layout completeness.
+7. Escalate only difficult pages (tables, multi-column layouts, formulas, mixed scripts) to heavier document-understanding/VLM models.
+8. Keep source image, raw extracted text and normalized blocks for review.
+9. Never silently treat low-confidence OCR as verified question text.
 
 Candidate tools/models to benchmark:
-- Docling for document conversion and normalized layout representation.
-- PyMuPDF or pypdf for PDF extraction/rendering, after dependency/license review.
-- python-docx, python-pptx and openpyxl for native Office formats.
-- PaddleOCR PP-OCR series for printed OCR and PP-Structure capabilities for layout/table cases.
-- Qianfan-OCR and vision-language document models as escalation candidates, subject to license, hosting and performance checks.
+- Docling for common document conversion and normalized layout representation (MIT codebase license; individual model/dependency licenses remain separate).
+- pypdf and other PDF parsers; review PyMuPDF licensing before adoption.
+- python-docx, python-pptx and openpyxl for feature-specific native extraction where needed.
+- PaddleOCR PP-OCRv6 as a current printed-text candidate; PP-StructureV3 and PaddleOCR-VL as layout/document escalation candidates. The PaddleOCR repository is Apache-2.0, but review individual model weights and transitive dependencies.
 - LibreOffice in a restricted worker for legacy Office conversion.
 - Pillow/OpenCV for image preprocessing.
 
