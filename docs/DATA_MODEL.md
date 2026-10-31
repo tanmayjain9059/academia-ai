@@ -28,8 +28,8 @@ Every workspace-owned row includes `workspace_id`. Enforce membership in the app
 - reference_chunks: workspace, index version, source block range, normalized content, unit/section metadata and retrieval fields.
 - embeddings: workspace, chunk, model ID/version, dimensions and vector; re-embedding creates a new index/embedding version rather than overwriting provenance.
 - answers: workspace, question, selected answer mode and current approved version pointer.
-- answer_versions: workspace, immutable generated/edited versions, status, content, model metadata, prompt version and question-transcription version.
-- answer_sources: workspace, answer version, reference chunk/block, source location and evidence order.
+- answer_versions: workspace, immutable generated/edited versions, status, content, model/provider/version metadata, prompt-template version, question-transcription revision ID, subject-profile version ID, selected source/index version IDs, validation status and usage metadata.
+- answer_sources: workspace, answer version, reference chunk/block, source processing-run ID, source location and evidence order.
 - processing_jobs: workspace, job type, resource IDs, idempotency key, status, attempts, lease token/expiry and safe error category.
 - job_attempts: workspace, job, attempt number, worker identity, start/end, lease outcome and safe failure category.
 - exports: workspace, subject/filter, status, output object key, expiry and generation metadata.
@@ -47,7 +47,7 @@ Every workspace-owned row includes `workspace_id`. Enforce membership in the app
 - Subject-profile settings are versioned; generation records the exact profile version used.
 - Reference index versions are immutable; a rebuild creates a new version and never retargets existing answer citations.
 - Answer sources reference immutable document processing versions and block IDs.
-- Exports reference the exact question and answer versions.
+- Exports reference the exact ordered question, transcription revision and answer version IDs; export items may omit answer or question content only for the explicitly selected export mode.
 - All foreign-key relationships that cross tenant-owned entities must enforce matching workspace ownership, preferably through composite unique keys and composite foreign keys such as (workspace_id, parent_id).
 - Index foreign-key columns used in joins, ownership checks and deletion workflows.
 - Deleting a document must not silently orphan answer citations. Use tombstone, purge and retention semantics defined in DATA_INTEGRITY_AND_EVALUATION.md.
