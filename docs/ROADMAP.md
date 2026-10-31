@@ -11,12 +11,14 @@ Deliver:
 - AI/OCR benchmark plan.
 - Security/privacy baseline.
 - Deployment and cost strategy.
+- Data integrity, tenant isolation and deletion lifecycle specification.
 - Open decision register and acceptance criteria.
 
 Exit criteria:
 - Owner reviews and approves the architecture.
 - Critical unknowns are resolved or explicitly accepted as risks.
 - Hosting and model budget ceiling is documented.
+- Benchmark corpus design, annotation approach and numeric quality gates are agreed after baseline measurements.
 - No application runtime code is written before authorization.
 
 ## Phase 1 — Repository and engineering foundation
@@ -37,8 +39,10 @@ Exit criteria: reproducible local setup; CI passes; no secrets committed.
 - Private object-storage upload intents and finalization.
 - File signature/size validation and quota enforcement.
 - Document listing, deletion and audit metadata.
+- Database RLS and composite ownership constraints.
+- Cross-workspace negative tests across API, SQL, pooled connections, object storage and worker jobs.
 
-Exit criteria: cross-tenant tests deny all unauthorized access; original hash round-trips.
+Exit criteria: cross-workspace tests deny unauthorized access using the least-privilege runtime role; pooled transactions show no RLS context leakage; original hash round-trips.
 
 ## Phase 3 — Document ingestion
 
