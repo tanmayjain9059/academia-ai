@@ -23,14 +23,16 @@ sequenceDiagram
     Web->>Store: Upload original bytes
     Web->>API: Finalize(document_id, idempotency_key)
     API->>Store: HEAD object and verify size/checksum
-    API->>Worker: Validate signature in isolated job
-    Worker->>Store: Read uploaded bytes
-    Worker->>Worker: Type detection, limits, malware/parser isolation
-    Worker-->>API: Validation result
-    API->>DB: Persist immutable original metadata + processing job/outbox
+    API->>DB: Persist finalize request + validation job/outbox
     DB-->>Queue: Outbox dispatch
-    Queue->>Worker: Job ID (at-least-once)
+    Queue->>Worker: Validation job ID (at-least-once)
     Worker->>DB: Reload job/document and verify workspace + state
+    Worker->>Store: Read uploaded bytes
+    Worker->>Worker: Type detection, signature/limits checks in isolation
+    Worker->>DB: Record immutable original metadata and create processing run/job
+    DB-->>Queue: Processing job outbox dispatch
+    Queue->>Worker: Processing job ID
+    Worker->>DB: Re-check ownership, source state and lease
     Worker->>Store: Read immutable original
     Worker->>Worker: Parse native structure; OCR only where required
     Worker->>Store: Persist derived previews/artifacts
