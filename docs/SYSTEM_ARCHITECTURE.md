@@ -18,7 +18,7 @@ Status: proposed logical architecture. Vendor and instance sizing remain subject
 2. API: Python + FastAPI; authentication integration, authorization, validation, domain operations, presigned upload/download orchestration.
 3. PostgreSQL: tenants/users, subjects, documents, extraction records, questions, answer versions, source references, jobs, usage and audit metadata.
 4. Object storage: originals, rendered page previews, extracted media, generated PDFs and temporary processing artifacts.
-5. Queue: durable job dispatch for ingestion, OCR, embedding, answer generation and export.
+5. Durable queue: job dispatch for ingestion, OCR, embedding, answer generation and export; requires at-least-once-safe processing, visibility/lease extension, bounded retries and dead-letter handling.
 6. CPU workers: parsing, conversion, page rendering, OCR pre/post-processing, chunking and PDF generation.
 7. GPU/model workers or external inference endpoint: OCR/VLM, embeddings/reranker and answer generation according to benchmarked demand.
 8. Vector retrieval: initially PostgreSQL with pgvector plus PostgreSQL full-text search; evaluate a separate vector database only when measured scale or query behavior justifies it.
@@ -29,10 +29,10 @@ Status: proposed logical architecture. Vendor and instance sizing remain subject
 1. Client requests an upload intent for a subject and file category.
 2. API authenticates the user, checks tenant quota and creates a pending document record.
 3. API returns a short-lived, object-specific signed upload URL.
-4. Client uploads directly to private object storage.
+4. Client uploads directly to private object storage (for R2, evaluate signed PUT; presigned HTML form POST is not supported).
 5. API finalizes the upload; a worker verifies object existence, size, checksum and actual file signature.
 6. An ingestion job is created transactionally with an outbox event or equivalent reliable dispatch.
-7. Worker routes the file by detected format and extracts native structure first.
+7. Worker routes the file by detected format and extracts native structure first; Docling is the leading normalization candidate, with specialist parser fallbacks for fidelity gaps.
 8. Scanned/image pages are sent to OCR; complex layout pages can be escalated selectively.
 9. Normalized blocks retain page/slide/sheet coordinates, extraction method, confidence and original asset reference.
 10. Question detection creates candidate question records; reference ingestion creates structured chunks.
@@ -57,7 +57,8 @@ Status: proposed logical architecture. Vendor and instance sizing remain subject
 - Retries are bounded and limited to transient failures. Invalid files and policy failures are terminal.
 - Worker operations are idempotent; duplicate queue delivery must not duplicate user-visible records.
 - Use database transactions for state transitions and related writes.
-- Long jobs heartbeat and use visibility timeouts/leases.
+- Long jobs heartbeat and extend queue visibility/leases; a worker crash must eventually make the job eligible for retry.
+- Use a transactional outbox or equivalent to avoid committing a job record while losing its queue dispatch.
 - Rate-limit expensive work per user and globally.
 - GPU workers use bounded concurrency and backpressure; queue rather than exhaust memory.
 - Use per-provider circuit breakers/timeouts and a controlled fallback policy.
@@ -70,7 +71,7 @@ Start with:
 - One API deployment.
 - One PostgreSQL database.
 - One private object-storage bucket.
-- One queue and a small CPU worker deployment.
+- One durable queue and a small CPU worker deployment.
 - A separately deployable inference endpoint/provider.
 
 Keep API and workers in a modular codebase initially. Avoid Kubernetes and microservices until metrics show a clear need. A single shared GPU endpoint may serve the initial beta, but enforce queueing, request limits and cost budgets.
