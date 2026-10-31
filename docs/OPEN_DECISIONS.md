@@ -7,14 +7,14 @@ Status: active decision register. No item below should be silently treated as ap
 | D-01 | Initial launch geography | India-first assumption for evaluation only | Confirm legal/data residency and target users |
 | D-02 | Frontend hosting | Static frontend on a CDN | Compare build/deploy workflow and free-tier limits |
 | D-03 | API/worker hosting | Managed container platform | Benchmark region, persistent networking, queue and costs |
-| D-04 | PostgreSQL provider | Managed Postgres; pgvector required | Verify extension/version, pooling, backups, RLS support and limits |
-| D-05 | Object storage | S3-compatible private storage; R2 candidate | Test signed URLs, CORS, lifecycle, region and data processing terms |
-| D-06 | Queue | Managed Redis or managed durable queue | Compare delivery semantics, persistence, retries and operational burden |
+| D-04 | PostgreSQL provider | Managed Postgres; pgvector required; Supabase Mumbai is a concrete candidate | Verify exact-plan extension/index support, pooling, backups, RLS, region and total cost |
+| D-05 | Object storage | Private S3-compatible storage; R2 candidate | Test signed PUT/multipart, CORS, lifecycle, bucket location and data processing terms |
+| D-06 | Queue | Durable managed queue with visibility leases and DLQ; SQS is a reference implementation | Compare SQS, managed Redis worker queue and QStash for parallelism, retries, region, cost and ops |
 | D-07 | Inference hosting | Hugging Face for experimentation; production provider undecided | Benchmark model quality, concurrency, privacy, cold start and cost |
-| D-08 | OCR model | PaddleOCR family as baseline candidate | Benchmark scans, tables, equations, mixed language and handwriting separately |
+| D-08 | OCR model | PaddleOCR PP-OCRv6 baseline candidate; PP-Structure/VL for escalation | Benchmark scans, tables, equations, mixed language and handwriting separately; review model licenses |
 | D-09 | Answer LLM | Qwen and other open-weight models as candidates | Build human-reviewed academic benchmark; verify license and serving |
 | D-10 | Embedding model | BGE-M3 and multilingual-e5 candidates | Compare retrieval recall, language support, dimensions, cost and latency |
-| D-11 | Authentication | Managed identity provider or maintained auth library | Compare pricing, user export/deletion, India availability and lock-in |
+| D-11 | Authentication | Managed OIDC/JWT provider; Clerk and Supabase Auth candidates | Compare FastAPI integration, MFA, user export/deletion, India data handling, pricing and lock-in |
 | D-12 | Pricing model | Free/limited beta first; usage-aware paid tier may follow | Agree budget ceiling and expected free allowance |
 | D-13 | Data retention | User-controlled deletion; retention period undecided | Decide backups, deleted-object purge window and legal requirements |
 | D-14 | Collaboration | Excluded from MVP | Revisit only after single-user workflow is proven |
@@ -41,3 +41,5 @@ Do not upload copyrighted or personal academic files into public benchmark repos
 5. Approve source-only vs combined-knowledge answer behavior.
 6. Approve data retention and deletion expectations.
 7. Approve final model/provider selection after benchmark results.
+
+See [Technical research and provisional decisions](TECHNICAL_DECISIONS.md) for evidence checked on 2026-10-31. That document is research, not a provider procurement approval.
