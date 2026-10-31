@@ -26,9 +26,9 @@ The current Spaces overview lists CPU Basic at 2 vCPU, 16 GB RAM and non-persist
 
 - Frontend: static hosting/CDN.
 - API and CPU workers: container platform with persistent network access to Postgres, object storage and queue.
-- PostgreSQL: managed Postgres with backups, pooling and pgvector support verified.
-- Object storage: Cloudflare R2 or equivalent private S3-compatible service.
-- Queue: managed Redis or managed queue service; choose based on worker reliability and cost.
+- PostgreSQL: managed Postgres with backups, pooling and pgvector support verified. Supabase is a concrete evaluation candidate because its current region list includes Mumbai (AWS ap-south-1); verify exact plan capabilities and data-processing scope before choosing.
+- Object storage: Cloudflare R2 or equivalent private S3-compatible service. R2 supports S3-compatible access and presigned PUT/GET/HEAD/DELETE; signed form POST is not supported. Use short-lived, object-scoped URLs and validate uploads again server-side.
+- Queue: durable managed queue with visibility/lease extension, bounded retries and dead-letter handling. Evaluate SQS, managed Redis worker queues and QStash rather than assuming all queue products have identical parallelism/delivery semantics.
 - Inference: benchmarked GPU endpoint or provider API with explicit data-processing terms and cost tracking.
 
 Cloudflare R2 pricing documentation currently states no internet egress charge and lists standard storage at $0.015/GB-month, with operation charges and monthly free allowances described on its pricing page: https://developers.cloudflare.com/r2/pricing/
@@ -91,3 +91,5 @@ Score candidate providers on:
 - Ability to export/migrate data and inference configuration.
 
 No provider is selected as final until a representative workload benchmark and owner cost ceiling are agreed.
+
+See [Technical research and provisional decisions](TECHNICAL_DECISIONS.md) for dated evidence on Postgres, object storage, queue semantics, auth and parser licensing.
