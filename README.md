@@ -34,6 +34,7 @@ Academia AI helps students organize academic materials, preserve original questi
 - Data model: `docs/DATA_MODEL.md`
 - Data integrity, tenant isolation and evaluation: `docs/DATA_INTEGRITY_AND_EVALUATION.md`
 - API contracts: `docs/API_SPECIFICATION.md`
+- API lifecycle and mutation contracts: `docs/API_LIFECYCLE_CONTRACT.md`
 - Security and privacy: `docs/SECURITY_AND_PRIVACY.md`
 - Technical research and provisional decisions: `docs/TECHNICAL_DECISIONS.md`
 - Deployment and costs: `docs/DEPLOYMENT_AND_COSTS.md`
