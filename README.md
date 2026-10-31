@@ -26,13 +26,23 @@ Academia AI helps students organize academic materials, preserve original questi
 - Add tests for non-trivial behavior and run relevant checks before reporting success.
 - Never merge into main or deploy without explicit approval.
 
-## Planned documentation
+## Architecture documentation
 
-The architecture baseline will be maintained under docs/, covering product requirements, system architecture, AI/model strategy, data model, API contracts, security, deployment, cost assumptions, and implementation roadmap.
+- Product requirements: `docs/PRODUCT_REQUIREMENTS.md`
+- System architecture: `docs/SYSTEM_ARCHITECTURE.md`
+- AI/model strategy: `docs/AI_MODEL_STRATEGY.md`
+- Data model: `docs/DATA_MODEL.md`
+- Data integrity, tenant isolation and evaluation: `docs/DATA_INTEGRITY_AND_EVALUATION.md`
+- API contracts: `docs/API_SPECIFICATION.md`
+- Security and privacy: `docs/SECURITY_AND_PRIVACY.md`
+- Technical research and provisional decisions: `docs/TECHNICAL_DECISIONS.md`
+- Deployment and costs: `docs/DEPLOYMENT_AND_COSTS.md`
+- Roadmap: `docs/ROADMAP.md`
+- Open decisions: `docs/OPEN_DECISIONS.md`
 
 ## Repository workflow
 
-- main is the protected integration target.
+- main is the integration target.
 - Work on focused feature or documentation branches.
-- Open pull requests for review.
+- Open pull requests for review when a coherent change set is ready.
 - Do not merge pull requests or deploy without explicit owner approval.
