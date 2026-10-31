@@ -42,7 +42,7 @@ Status: proposed logical architecture. Vendor and instance sizing remain subject
 ## 4. Answer generation flow
 
 1. API verifies ownership of question, subject and selected sources.
-2. Retrieval applies tenant, subject, source-type and optional unit filters before similarity ranking.
+2. Retrieval applies workspace, subject, source-type and optional unit filters before similarity ranking.
 3. Hybrid retrieval combines lexical search and vector similarity; optional reranking follows benchmark evidence.
 4. Prompt construction includes question text, answer mode, marks, syllabus profile and selected source passages with provenance.
 5. Inference adapter calls the chosen model with bounded context, timeout and token budget.
@@ -53,7 +53,7 @@ Status: proposed logical architecture. Vendor and instance sizing remain subject
 ## 5. Reliability and concurrency
 
 - Jobs have explicit states: queued, running, succeeded, failed, cancelled.
-- Every job has tenant_id, idempotency key, attempt count, timestamps and safe error category.
+- Every job has workspace_id, idempotency key, attempt count, timestamps and safe error category.
 - Retries are bounded and limited to transient failures. Invalid files and policy failures are terminal.
 - Worker operations are idempotent; duplicate queue delivery must not duplicate user-visible records.
 - Use database transactions for state transitions and related writes.
