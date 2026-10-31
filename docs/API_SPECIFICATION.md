@@ -30,6 +30,8 @@ Status: proposed resource contract. Exact payload schemas and OpenAPI definition
 - `GET /subjects`
 - `GET /subjects/{subject_id}`
 - `PATCH /subjects/{subject_id}`
+- `GET /subjects/{subject_id}/profile-versions`
+- `POST /subjects/{subject_id}/profile-versions` (append a new subject-profile revision)
 - `DELETE /subjects/{subject_id}` (archive or explicit dependency handling)
 
 ### Documents and processing
@@ -52,6 +54,7 @@ Upload flow: API authorizes and creates a pending record, returns a short-lived 
 - `POST /documents/{document_id}/processing-runs/{run_id}/question-extractions`
 - `GET /questions` (filter by subject, document, run and extraction status)
 - `GET /questions/{question_id}`
+- `GET /questions/{question_id}/groups` (where hierarchy/grouping applies)
 - `POST /questions/{question_id}/transcription-revisions`
 - `GET /questions/{question_id}/transcription-revisions`
 - `POST /questions/{question_id}/transcription-revisions/{revision_id}/verify`
@@ -79,6 +82,7 @@ Indexing is asynchronous and versioned. Each chunk/embedding records workspace, 
 - `POST /answers/{answer_id}/regenerations`
 - `POST /answer-versions/{version_id}/approval`
 - `GET /answer-versions/{version_id}/sources`
+- `GET /answer-versions/{version_id}/source-locations` (exact page/slide/sheet/block/region provenance)
 
 Generation pins the question transcription revision, selected source/index versions, answer mode, marks/length target and subject-profile version. Each generation/edit creates a new immutable answer version. Approval updates a current pointer with optimistic concurrency; it does not mutate answer content.
 
