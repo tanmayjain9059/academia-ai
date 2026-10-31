@@ -48,7 +48,7 @@ Use deterministic parsing first for numbering, headings, marks and common struct
 
 Initial design: PostgreSQL full-text search + pgvector.
 - Chunk along headings, paragraphs, slides, table rows and other structural boundaries.
-- Store tenant_id, subject_id, document_id, document version, source type, unit, page/slide/sheet and block IDs.
+- Store workspace_id, subject_id, document_id, document version, source type, unit, page/slide/sheet and block IDs.
 - Apply access and subject filters before vector ranking.
 - Combine lexical and vector candidates; deduplicate by source block.
 - Evaluate reranking only if it improves answer evidence retrieval enough to justify latency and cost.
